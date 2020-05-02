@@ -1,0 +1,24 @@
+{
+  "name": "charity-block",
+  "version": "1.0.0",
+  "description": "A blockchain prototype for donations through Ethereum Blockchain",
+  "main": "index.js",
+  "scripts": {
+    "build-eth": "cd ethereum && node compile",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ovidiu12/charity-block.git"
+  },
+  "author": "Ovidiu G",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ovidiu12/charity-block/issues"
+  },
+  "homepage": "https://github.com/ovidiu12/charity-block#readme",
+  "dependencies": {
+    "fs-extra": "^9.0.0",
+    "solc": "^0.6.6"
+  }
+}
