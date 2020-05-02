@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "build-eth": "cd ethereum && node compile",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon server.js",
+    "build": "next build",
+    "start": "NODE_ENV=production node server.js"
   },
   "repository": {
     "type": "git",
@@ -18,7 +20,19 @@
   },
   "homepage": "https://github.com/ovidiu12/charity-block#readme",
   "dependencies": {
+    "@material-ui/core": "^4.9.12",
+    "@material-ui/icons": "^4.9.1",
     "fs-extra": "^9.0.0",
-    "solc": "^0.6.6"
+    "next": "9.3.6",
+    "next-routes": "^1.4.2",
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
+    "react-modal": "^3.11.2",
+    "solc": "^0.6.6",
+    "styled-components": "^5.1.0",
+    "web3": "^1.2.7"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.3"
   }
 }
