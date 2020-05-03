@@ -4,6 +4,9 @@ import Head from "next/head";
 import { ThemeProvider } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import theme from "../components/theme";
+import GlobalStyles from "../components/reset";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function MyApp(props) {
   const { Component, pageProps } = props;
@@ -28,6 +31,8 @@ export default function MyApp(props) {
       <ThemeProvider theme={theme}>
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline />
+        <GlobalStyles />
+        <ToastContainer />
         <Component {...pageProps} />
       </ThemeProvider>
     </React.Fragment>

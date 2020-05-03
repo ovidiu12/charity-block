@@ -4,7 +4,7 @@ import "./CharityCampaign.sol";
 import "./CharityToken.sol";
 
 
-contract Main is CharityToken {
+contract CharityMain is CharityToken {
     CharityCampaign[] public activeCampaigns;
 
     constructor(

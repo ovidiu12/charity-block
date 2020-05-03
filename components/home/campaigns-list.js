@@ -17,6 +17,7 @@ const StyledCard = styled(Card)`
 `;
 
 const StyledCardMedia = styled(CardMedia)`
+  min-height: 200px;
   paddingtop: 56.25%;
 `;
 
@@ -28,15 +29,15 @@ const CampaignsList = ({ campaigns }) => {
   return (
     <Grid container spacing={4}>
       {campaigns.map((campaign) => (
-        <Grid item key={campaign.id} xs={12} sm={6} md={4}>
+        <Grid item key={campaign.image} xs={12} sm={6} md={4}>
           <StyledCard>
             <StyledCardMedia
-              image="https://source.unsplash.com/random"
+              image={`https://ipfs.io/ipfs/${campaign.imageHash}`}
               title="Image title"
             />
             <StyledCardContent>
               <Typography gutterBottom variant="h5" component="h2">
-                Heading
+                {campaign.title}
               </Typography>
               <Typography>
                 This is a media card. You can use this section to describe the
