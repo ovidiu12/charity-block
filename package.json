@@ -37,6 +37,7 @@
     "web3": "^1.2.7"
   },
   "devDependencies": {
+    "next-images": "^1.4.0",
     "nodemon": "^2.0.3"
   }
 }

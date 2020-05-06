@@ -121,18 +121,22 @@ contract CharityCampaign {
             uint256,
             uint256,
             uint256,
+            uint256,
             address,
+            string memory,
             string memory,
             string memory
         )
     {
         return (
+            goal,
             minDonation,
             address(this).balance, //balance of the campaign
             spendingRequests.length,
             donorsCount,
             admin,
             title,
+            description,
             coverImageHash[0]
         );
     }

@@ -6,10 +6,13 @@ import NewCampaignModal from "../components/home/campaign-modal";
 import { CampaignModalContext } from "../components/home/campaign-context";
 import MainContract from "../ethereum";
 import Campaign from "../ethereum/campaign";
+import DonateModal from "../components/home/donate-modal";
 
 const Home = ({ campaigns }) => {
   const [metamaskEnabled, setMetamaskEnabled] = React.useState(false);
   const [campaignModalIsOpen, setCampaignModalIsOpen] = React.useState(false);
+  const [donateModalIsOpen, setDonateModalIsOpen] = React.useState(false);
+  const [donateModalCampaign, setDonateModalCampaign] = React.useState(null);
 
   const [loading, setLoading] = React.useState(true);
 
@@ -50,6 +53,11 @@ const Home = ({ campaigns }) => {
       </Layout>
     );
   }
+
+  const handleOpenDonateModal = (campaign) => {
+    setDonateModalCampaign(campaign);
+    setDonateModalIsOpen(true);
+  };
   return (
     <CampaignModalContext.Provider
       value={{
@@ -68,12 +76,33 @@ const Home = ({ campaigns }) => {
             >
               Campaigns in Progress
             </Typography>
-            <CampaignsList campaigns={campaigns} />
+            {campaigns.length > 0 ? (
+              <CampaignsList
+                handleOpenDonateModal={handleOpenDonateModal}
+                campaigns={campaigns}
+              />
+            ) : (
+              <Typography
+                variant="h6"
+                align="center"
+                color="textSecondary"
+                paragraph
+              >
+                No active campaigns.
+              </Typography>
+            )}
           </>
         ) : (
           <MetamaskInfo />
         )}
         <NewCampaignModal />
+        {donateModalCampaign && donateModalIsOpen && (
+          <DonateModal
+            isOpen={donateModalIsOpen}
+            campaign={donateModalCampaign}
+            setIsOpen={setDonateModalIsOpen}
+          />
+        )}
       </Layout>
     </CampaignModalContext.Provider>
   );
@@ -89,16 +118,17 @@ Home.getInitialProps = async () => {
       return campaign.methods.getData().call();
     })
   );
-
   const campaignss = campaigns.map((element, index) => {
     return {
-      minDonation: element[0],
+      goal: element[0],
+      minDonation: element[1],
+      balance: element[2],
+      spendingRequests: element[3],
+      donorsCount: element[4],
       address: campaignsAddress[index],
-      balance: element[1],
-      spendingRequests: element[2],
-      donorsCount: element[3],
-      title: element[5],
-      imageHash: element[6],
+      title: element[6],
+      description: element[7],
+      imageHash: element[8],
     };
   });
 

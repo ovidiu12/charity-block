@@ -32,18 +32,26 @@ const ModalHeading = styled(Typography)`
     margin-bottom: 30px;
   }
 `;
-const { toHex } = web3.utils;
 
 const CampaignModal = () => {
   const { isOpen, setIsOpen } = React.useContext(CampaignModalContext);
   const [error, setError] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+  const [success, setSuccess] = React.useState(false);
   const [state, setState] = React.useState({
     title: "",
     description: "",
     minDonation: 0,
     goal: 0,
     file: null,
+  });
+
+  React.useEffect(() => {
+    return () => {
+      setLoading(false);
+      setSuccess(false);
+      setError(false);
+    };
   });
 
   const onChange = (e) => {
@@ -55,21 +63,22 @@ const CampaignModal = () => {
 
   const onChangeFile = (event) => {
     event.preventDefault();
-    setLoading(true);
     const file = event.target.files[0];
     const reader = new window.FileReader();
     reader.readAsArrayBuffer(file);
     reader.onloadend = () => {
       setState({ ...state, file: Buffer(reader.result) });
-      setLoading(false);
     };
   };
 
   const onSubmit = (event) => {
     event.preventDefault();
     setLoading(true);
-    setError({});
-
+    setError(false);
+    if (parseFloat(state.goal) < 1 || parseFloat(state.minDonation) < 0.0001) {
+      toast.error("Minimum donation or goal are too low.");
+      return;
+    }
     try {
       ipfs.files.add(state.file, async (error, result) => {
         if (error) {
@@ -80,8 +89,8 @@ const CampaignModal = () => {
           const accounts = await web3.eth.getAccounts();
           await MainContract.methods
             .createCampaign(
-              toHex(state.minDonation),
-              toHex(state.goal),
+              web3.utils.toWei(state.minDonation),
+              web3.utils.toWei(state.goal),
               state.title,
               state.description,
               ipfsImageHash
@@ -91,6 +100,8 @@ const CampaignModal = () => {
               gas: "2000000",
             });
           setIsOpen(false);
+          setLoading(false);
+          setSuccess(true);
           toast.success("Campaign published successfully!");
         }
       });
@@ -108,6 +119,12 @@ const CampaignModal = () => {
     }
   };
 
+  if (loading && !success && !error) {
+    toast.info(
+      "We are publishing your campaign. This will take about a minute.",
+      { autoClose: 5000 }
+    );
+  }
   return (
     <Modal isOpen={isOpen} closeModal={() => setIsOpen(false)}>
       <ModalHeading variant="h5" align="center" color="textSecondary" paragraph>
@@ -133,7 +150,7 @@ const CampaignModal = () => {
           rows={3}
         />
         <StyledTextField
-          label="Minimum Donation"
+          label="Minimum Donation (in Ether)"
           value={state["minDonation"]}
           name="minDonation"
           onChange={onChange}
@@ -141,8 +158,20 @@ const CampaignModal = () => {
           variant="outlined"
           type="number"
         />
+        {parseFloat(state.minDonation) < 0.0001 && (
+          <div
+            style={{
+              color: "red",
+              marginBottom: "8px",
+              fontSize: "12px",
+              paddingLeft: "14px",
+            }}
+          >
+            Should be greater than 0.00001 Ether
+          </div>
+        )}
         <StyledTextField
-          label="Goal"
+          label="Goal (in Ether)"
           value={state["goal"]}
           name="goal"
           onChange={onChange}
@@ -150,6 +179,18 @@ const CampaignModal = () => {
           variant="outlined"
           type="number"
         />
+        {parseFloat(state.minDonation) < 0.0001 && (
+          <div
+            style={{
+              color: "red",
+              marginBottom: "8px",
+              fontSize: "12px",
+              paddingLeft: "14px",
+            }}
+          >
+            Should be greater than 1 Ether
+          </div>
+        )}
         <StyledFormLabel>Cover Image</StyledFormLabel>
         <StyledTextField
           onChange={onChangeFile}
@@ -164,7 +205,7 @@ const CampaignModal = () => {
           variant="contained"
           color="primary"
         >
-          Create Campaign
+          {loading ? "Loading..." : "Create Campaign"}
         </SubmitBtn>
         {error && (
           <FormLabel error={true}>
