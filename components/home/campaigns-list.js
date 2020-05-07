@@ -13,6 +13,7 @@ import {
 import styled from "styled-components";
 import ETHIcon from "../../svgs/eth.svg";
 import web3 from "../../ethereum/web3";
+import Link from "next/link";
 
 const StyledCard = styled(Card)`
   height: 100%;
@@ -24,10 +25,13 @@ const StyledCard = styled(Card)`
 const StyledCardActions = styled(CardActions)`
   && {
     padding: 20px;
+    a {
+      text-decoration: none;
+    }
   }
 `;
 const StyledCardMedia = styled(CardMedia)`
-  min-height: 200px;
+  min-height: 300px;
   paddingtop: 56.25%;
 `;
 
@@ -131,9 +135,13 @@ const CampaignsList = ({ campaigns, handleOpenDonateModal }) => {
                 >
                   Donate
                 </Button>
-                <Button size="small" color="primary">
-                  View
-                </Button>
+                <Link href={`/campaign/${campaign.address}`} passHref>
+                  <a>
+                    <Button size="small" color="primary">
+                      View
+                    </Button>
+                  </a>
+                </Link>
               </StyledCardActions>
             </StyledCard>
           </Grid>
