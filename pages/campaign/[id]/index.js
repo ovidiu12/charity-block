@@ -1,8 +1,8 @@
 import React from "react";
-import Campaign from "../../ethereum/campaign";
-import Layout from "../../components/layout";
+import Campaign from "../../../ethereum/campaign";
+import Layout from "../../../components/layout";
 import styled from "styled-components";
-import web3 from "../../ethereum/web3";
+import web3 from "../../../ethereum/web3";
 import Image from "react-image";
 import {
   LinearProgress,
@@ -11,9 +11,12 @@ import {
   Typography,
   Button,
 } from "@material-ui/core";
-import ETHIcon from "../../svgs/eth.svg";
+import ETHIcon from "../../../svgs/eth.svg";
 import WhatshotIcon from "@material-ui/icons/Whatshot";
 import MuiAlert from "@material-ui/lab/Alert";
+import BuildIcon from "@material-ui/icons/Build";
+import SpendingModal from "../spending-modal";
+import Link from "next/link";
 
 const CoverImage = styled.div`
   width: 100%;
@@ -106,7 +109,7 @@ const Title = styled.div`
   display: flex;
 
   && {
-    button {
+    div {
       margin-left: auto;
     }
     p {
@@ -115,18 +118,44 @@ const Title = styled.div`
   }
 `;
 
+const Actions = styled.div``;
+
+const StyledAlert = styled(MuiAlert)`
+  && {
+    align-items: center;
+    button {
+      border-color: white;
+      color: white;
+      margin-left: 10px;
+    }
+    a {
+      text-decoration: none;
+    }
+  }
+`;
+
 function Alert(props) {
   return (
-    <div style={{ marginBottom: "50px" }}>
-      <MuiAlert elevation={6} variant="filled" {...props} />
+    <div
+      style={{
+        marginBottom: "50px",
+      }}
+    >
+      <StyledAlert elevation={6} variant="filled" {...props} />
     </div>
   );
 }
 
 const CampaignPage = (props) => {
-  console.log(props);
+  const [userAccounts, setUserAccounts] = React.useState(null);
   const muiTheme = useTheme();
   const minDonation = web3.utils.fromWei(props.minDonation, "ether");
+  const [spendingModalIsOpen, setSpendingModalIsOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    //get current user addresses
+    web3.eth.getAccounts().then((acc) => setUserAccounts(acc));
+  }, []);
   return (
     <Layout>
       <CoverImage>
@@ -165,6 +194,20 @@ const CampaignPage = (props) => {
           {props.address}
         </a>
       </Alert>
+      <Alert severity="success">
+        This campaign has {props.spendingRequests} spending requests.
+        <Link passHref href={`/campaign/${props.address}/spending-requests`}>
+          <a>
+            <Button
+              variant="outlined"
+              style={{ marginRight: "5px" }}
+              startIcon={<BuildIcon />}
+            >
+              View Spending Requests
+            </Button>
+          </a>
+        </Link>
+      </Alert>
       <Title>
         <Typography
           variant="h5"
@@ -175,13 +218,27 @@ const CampaignPage = (props) => {
         >
           {props.title}
         </Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<WhatshotIcon />}
-        >
-          DONATE
-        </Button>
+        <Actions>
+          {userAccounts && userAccounts.includes(props.admin) && (
+            <Button
+              onClick={() => setSpendingModalIsOpen(true)}
+              variant="outlined"
+              style={{ marginRight: "5px" }}
+              color="secondary"
+              startIcon={<BuildIcon />}
+            >
+              New Spending Request
+            </Button>
+          )}
+
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<WhatshotIcon />}
+          >
+            DONATE
+          </Button>
+        </Actions>
       </Title>
       <Typography
         variant="subtitle1"
@@ -192,6 +249,13 @@ const CampaignPage = (props) => {
       >
         {props.description}
       </Typography>
+      {spendingModalIsOpen && (
+        <SpendingModal
+          isOpen={spendingModalIsOpen}
+          campaign={{ ...props }}
+          setIsOpen={setSpendingModalIsOpen}
+        />
+      )}
     </Layout>
   );
 };
@@ -199,13 +263,15 @@ const CampaignPage = (props) => {
 CampaignPage.getInitialProps = async (props) => {
   const campaign = Campaign(props.query.id);
   const data = await campaign.methods.getData().call();
+
   return {
     goal: data[0],
     minDonation: data[1],
     balance: data[2],
     spendingRequests: data[3],
     donorsCount: data[4],
-    address: data[5],
+    admin: data[5],
+    address: props.query.id,
     title: data[6],
     description: data[7],
     imageHash: data[8],
