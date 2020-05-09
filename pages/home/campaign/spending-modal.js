@@ -1,10 +1,10 @@
 import React from "react";
 import styled from "styled-components";
-import Modal from "../../components/modal";
+import Modal from "../../../components/modal";
 import { TextField, Button, Typography, FormLabel } from "@material-ui/core";
-import Campaign from "../../ethereum/campaign";
+import Campaign from "../../../ethereum/campaign";
 import { toast } from "react-toastify";
-import web3 from "../../ethereum/web3";
+import web3 from "../../../ethereum/web3";
 
 const StyledTextField = styled(TextField)`
   && {
@@ -59,8 +59,8 @@ const SpendingModal = ({ isOpen, setIsOpen, campaign }) => {
       const accounts = await web3.eth.getAccounts();
       await campaign.methods
         .createSpendingRequest(
-          web3.utils.toWei(state.amount),
           state.description,
+          web3.utils.toWei(state.amount),
           state.recipient
         )
         .send({
@@ -68,6 +68,7 @@ const SpendingModal = ({ isOpen, setIsOpen, campaign }) => {
           gas: "2000000",
         });
       toast.success("Spending request created!");
+      setIsOpen(false);
     } catch (err) {
       console.log("ERR ", err);
       setLoading(false);

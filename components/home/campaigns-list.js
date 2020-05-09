@@ -135,7 +135,7 @@ const CampaignsList = ({ campaigns, handleOpenDonateModal }) => {
                 >
                   Donate
                 </Button>
-                <Link href={`/campaign/${campaign.address}`} passHref>
+                <Link href={`/home/campaign/${campaign.address}`} passHref>
                   <a>
                     <Button size="small" color="primary">
                       View

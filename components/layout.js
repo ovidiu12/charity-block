@@ -9,6 +9,7 @@ import {
 import WhatshotIcon from "@material-ui/icons/Whatshot";
 import styled from "styled-components";
 import { CampaignModalContext } from "./home/campaign-context";
+import Link from "next/link";
 
 const Navbar = styled(AppBar)`
   && {
@@ -21,21 +22,35 @@ const Actions = styled.div`
   display: flex;
 `;
 
+const NewCampaign = styled(Button)`
+  && {
+    border-color: white;
+    color: white;
+  }
+`;
+
 const Layout = ({ children }) => {
   const { setIsOpen } = React.useContext(CampaignModalContext);
   return (
     <>
       <Navbar color="primary" position="relative">
         <Container>
-          <Toolbar>
+          <Toolbar style={{ padding: 0 }}>
             <WhatshotIcon />
-            <Typography variant="h6" color="inherit" noWrap>
-              Charity Block
-            </Typography>
+            <Link href="/">
+              <Typography
+                style={{ cursor: "pointer" }}
+                variant="h6"
+                color="inherit"
+                noWrap
+              >
+                Charity Block
+              </Typography>
+            </Link>
             <Actions>
-              <Button onClick={() => setIsOpen(true)} variant="contained">
+              <NewCampaign onClick={() => setIsOpen(true)} variant="outlined">
                 New Campaign
-              </Button>
+              </NewCampaign>
             </Actions>
           </Toolbar>
         </Container>

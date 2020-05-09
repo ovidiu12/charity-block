@@ -68,6 +68,7 @@ const DonateModal = ({ isOpen, setIsOpen, campaign }) => {
         gas: "2000000",
       });
       toast.success("Thanks for your donation!");
+      setIsOpen(false);
     } catch (err) {
       console.log("ERR ", err);
       setLoading(false);

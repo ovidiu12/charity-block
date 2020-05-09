@@ -49,7 +49,17 @@ contract CharityCampaign {
         admin = creator;
         title = campaignTitle;
         description = campaignDescription;
+        isFunded = false;
         coverImageHash.push(imageHash);
+    }
+
+    function finishCampaign() public restrictedAccess {
+        require(
+            address(this).balance > goal,
+            "balance needs to be bigger than the goal"
+        );
+
+        isFunded = true;
     }
 
     function donateToCampaign() public payable {
@@ -67,6 +77,10 @@ contract CharityCampaign {
         uint256 amount,
         address payable recipient
     ) public restrictedAccess {
+        require(
+            isFunded,
+            "campaign should be funded before creating spending requests"
+        );
         SpendingRequest memory spendingReq = SpendingRequest({
             description: spendingDescription,
             amount: amount,
@@ -123,6 +137,7 @@ contract CharityCampaign {
             uint256,
             uint256,
             address,
+            bool,
             string memory,
             string memory,
             string memory
@@ -135,10 +150,25 @@ contract CharityCampaign {
             spendingRequests.length,
             donorsCount,
             admin,
+            isFunded,
             title,
             description,
             coverImageHash[0]
         );
+    }
+
+    function didApprovedRequest(uint256 index, address approver)
+        public
+        view
+        returns (bool)
+    {
+        SpendingRequest storage request = spendingRequests[index];
+
+        return request.allApprovals[approver];
+    }
+
+    function didDonate(address donorAddress) public view returns (bool) {
+        return donors[donorAddress];
     }
 
     function getAmountDonated(address donorIndex)

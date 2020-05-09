@@ -1,12 +1,12 @@
-import Layout from "../components/layout";
+import Layout from "../../components/layout";
 import { CircularProgress, Typography } from "@material-ui/core";
-import MetamaskInfo from "../components/home/metamask-info";
-import CampaignsList from "../components/home/campaigns-list";
-import NewCampaignModal from "../components/home/campaign-modal";
-import { CampaignModalContext } from "../components/home/campaign-context";
-import MainContract from "../ethereum";
-import Campaign from "../ethereum/campaign";
-import DonateModal from "../components/home/donate-modal";
+import MetamaskInfo from "../../components/home/metamask-info";
+import CampaignsList from "../../components/home/campaigns-list";
+import NewCampaignModal from "../../components/home/campaign-modal";
+import { CampaignModalContext } from "../../components/home/campaign-context";
+import MainContract from "../../ethereum";
+import Campaign from "../../ethereum/campaign";
+import DonateModal from "../../components/home/donate-modal";
 
 const Home = ({ campaigns }) => {
   const [metamaskEnabled, setMetamaskEnabled] = React.useState(false);
@@ -15,7 +15,6 @@ const Home = ({ campaigns }) => {
   const [donateModalCampaign, setDonateModalCampaign] = React.useState(null);
 
   const [loading, setLoading] = React.useState(true);
-
   const enableEth = async () => {
     const { ethereum } = window;
     if (ethereum) {
@@ -118,6 +117,7 @@ Home.getInitialProps = async () => {
       return campaign.methods.getData().call();
     })
   );
+  console.log(campaigns);
   const campaignss = campaigns.map((element, index) => {
     return {
       goal: element[0],
@@ -125,10 +125,12 @@ Home.getInitialProps = async () => {
       balance: element[2],
       spendingRequests: element[3],
       donorsCount: element[4],
+      admin: element[5],
+      isFunded: element[6],
+      title: element[7],
+      description: element[8],
+      imageHash: element[9],
       address: campaignsAddress[index],
-      title: element[6],
-      description: element[7],
-      imageHash: element[8],
     };
   });
 
