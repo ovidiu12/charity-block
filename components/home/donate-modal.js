@@ -4,6 +4,7 @@ import Modal from "../modal";
 import { TextField, Button, Typography, FormLabel } from "@material-ui/core";
 import Campaign from "../../ethereum/campaign";
 import { toast } from "react-toastify";
+import MainContract from "../../ethereum";
 import web3 from "../../ethereum/web3";
 
 const StyledTextField = styled(TextField)`
@@ -36,6 +37,7 @@ const DonateModal = ({ isOpen, setIsOpen, campaign }) => {
   const [loading, setLoading] = React.useState(false);
   const [address, setAddress] = React.useState(null);
   const [success, setSuccess] = React.useState(false);
+  console.log(campaign);
   const [state, setState] = React.useState({
     amount: 0,
   });
@@ -59,13 +61,15 @@ const DonateModal = ({ isOpen, setIsOpen, campaign }) => {
     event.preventDefault();
     setLoading(true);
     setError(false);
-    const campaign = address && Campaign(address);
     try {
       const accounts = await web3.eth.getAccounts();
-      await campaign.methods.donateToCampaign().send({
+      const campaignsAddress = await MainContract.methods
+        .getActiveCampaigns()
+        .call();
+      const index = campaignsAddress.indexOf(address);
+      await MainContract.methods.donate(index).send({
         from: accounts[0],
         value: web3.utils.toWei(state.amount, "ether"),
-        gas: "2000000",
       });
       toast.success("Thanks for your donation!");
       setIsOpen(false);

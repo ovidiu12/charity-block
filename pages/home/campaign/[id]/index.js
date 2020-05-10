@@ -68,7 +68,7 @@ const Progress = styled.div`
     background: ${({ theme }) => theme.palette.primary.main};
     color: white;
     position: absolute;
-    left: ${(props) => props.progress}%;
+    left: ${(props) => (props.progress >= 100 ? "100%" : `${props.progress}%`)};
     transform: translateX(-50%);
     top: -50px;
     width: 45px;
@@ -214,7 +214,6 @@ const CampaignPage = (props) => {
       return;
     }
   };
-
   return (
     <Layout>
       <Link href={`/home`} passHref>
@@ -281,8 +280,7 @@ const CampaignPage = (props) => {
                 </Button>
               </Alert>
               <Typography style={{ marginBottom: "10px" }} variant="body1">
-                You can now end the end the campaign and add new spending
-                requests.
+                You can end the campaign or keep it going.
               </Typography>
             </div>
           )}
@@ -292,9 +290,9 @@ const CampaignPage = (props) => {
             {props.address}
           </a>
         </Alert>
-        {props.isFunded && (
-          <Alert isInfo theme={muiTheme} severity="info">
-            This campaign has {props.spendingRequests} spending requests.
+        <Alert isInfo theme={muiTheme} severity="info">
+          This campaign has {props.spendingRequests} spending requests.
+          {props.spendingRequests !== "0" && (
             <Link
               passHref
               href={`/home/campaign/${props.address}/spending-requests`}
@@ -309,8 +307,8 @@ const CampaignPage = (props) => {
                 </Button>
               </a>
             </Link>
-          </Alert>
-        )}
+          )}
+        </Alert>
 
         <Title>
           <Typography
@@ -325,7 +323,7 @@ const CampaignPage = (props) => {
           <Actions>
             {userAccounts &&
               userAccounts.includes(props.admin) &&
-              props.isFunded && (
+              props.balance > 0 && (
                 <Button
                   onClick={() => setSpendingModalIsOpen(true)}
                   variant="outlined"
@@ -336,15 +334,16 @@ const CampaignPage = (props) => {
                   New Spending Request
                 </Button>
               )}
-
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => setDonateModalIsOpen(true)}
-              startIcon={<WhatshotIcon />}
-            >
-              DONATE
-            </Button>
+            {!props.isFunded && (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => setDonateModalIsOpen(true)}
+                startIcon={<WhatshotIcon />}
+              >
+                DONATE
+              </Button>
+            )}
           </Actions>
         </Title>
         <Typography

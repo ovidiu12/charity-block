@@ -49,7 +49,6 @@ contract CharityCampaign {
         admin = creator;
         title = campaignTitle;
         description = campaignDescription;
-        isFunded = false;
         coverImageHash.push(imageHash);
     }
 
@@ -62,13 +61,13 @@ contract CharityCampaign {
         isFunded = true;
     }
 
-    function donateToCampaign() public payable {
+    function donateToCampaign(uint256 value) public payable {
         require(
-            msg.value > minDonation,
+            value > minDonation,
             "you need to meet the minimum donation requirement"
         );
         donors[msg.sender] = true;
-        donorsAmounts[msg.sender].push(msg.value);
+        donorsAmounts[msg.sender].push(value);
         donorsCount++;
     }
 

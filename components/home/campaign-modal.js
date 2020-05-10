@@ -87,7 +87,7 @@ const CampaignModal = () => {
           const ipfsImageHash = result[0].hash;
 
           const accounts = await web3.eth.getAccounts();
-          await MainContract.methods
+          const res = await MainContract.methods
             .createCampaign(
               web3.utils.toWei(state.minDonation),
               web3.utils.toWei(state.goal),
@@ -99,6 +99,7 @@ const CampaignModal = () => {
               from: accounts[0],
               gas: "2000000",
             });
+          console.log(res);
           setIsOpen(false);
           setLoading(false);
           setSuccess(true);
