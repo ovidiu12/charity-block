@@ -117,7 +117,6 @@ Home.getInitialProps = async () => {
       return campaign.methods.getData().call();
     })
   );
-  console.log(campaigns);
   const campaignss = campaigns.map((element, index) => {
     return {
       goal: element[0],

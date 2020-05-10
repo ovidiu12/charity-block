@@ -35,14 +35,15 @@ contract CharityMain is CharityToken {
 
         activeCampaigns.push(newCampaign);
     }
-
-    function donate(uint256 index) public payable returns (bool) {
+    
+    function donate(uint256 index) public payable returns (bool){
         CharityCampaign campaign = CharityCampaign(activeCampaigns[index]);
-        campaign.donateToCampaign(msg.value);
+        campaign.donateToCampaign{value: msg.value}(msg.sender);
         rewardToken(msg.sender, msg.value);
         return true;
     }
-
+    
+    
     function getActiveCampaigns()
         public
         view

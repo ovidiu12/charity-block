@@ -5,11 +5,15 @@ import {
   Typography,
   Container,
   Button,
+  Avatar,
+  IconButton,
 } from "@material-ui/core";
 import WhatshotIcon from "@material-ui/icons/Whatshot";
 import styled from "styled-components";
 import { CampaignModalContext } from "./home/campaign-context";
 import Link from "next/link";
+import AvatarImg from "../public/avatar.jpg";
+import web3 from "../ethereum/web3";
 
 const Navbar = styled(AppBar)`
   && {
@@ -24,6 +28,7 @@ const Actions = styled.div`
 
 const NewCampaign = styled(Button)`
   && {
+    margin-right: 30px;
     border-color: white;
     color: white;
   }
@@ -31,6 +36,14 @@ const NewCampaign = styled(Button)`
 
 const Layout = ({ children }) => {
   const { setIsOpen } = React.useContext(CampaignModalContext);
+  const [hasMetamask, setHasMetamask] = React.useState(false);
+
+  React.useEffect(() => {
+    web3.eth
+      .getAccounts()
+      .then((acc) => setHasMetamask(true))
+      .catch(() => setHasMetamask(false));
+  }, []);
   return (
     <>
       <Navbar color="primary" position="relative">
@@ -47,11 +60,20 @@ const Layout = ({ children }) => {
                 Charity Block
               </Typography>
             </Link>
-            <Actions>
-              <NewCampaign onClick={() => setIsOpen(true)} variant="outlined">
-                New Campaign
-              </NewCampaign>
-            </Actions>
+            {hasMetamask && (
+              <Actions>
+                <NewCampaign onClick={() => setIsOpen(true)} variant="outlined">
+                  New Campaign
+                </NewCampaign>
+                <Link href="/home/profile" passhref>
+                  <a style={{ textDecoration: "none" }}>
+                    <IconButton style={{ padding: 0 }}>
+                      <Avatar alt="User Avatar" src={AvatarImg} />
+                    </IconButton>
+                  </a>
+                </Link>
+              </Actions>
+            )}
           </Toolbar>
         </Container>
       </Navbar>

@@ -70,6 +70,7 @@ const DonateModal = ({ isOpen, setIsOpen, campaign }) => {
       await MainContract.methods.donate(index).send({
         from: accounts[0],
         value: web3.utils.toWei(state.amount, "ether"),
+        gas: "5000000",
       });
       toast.success("Thanks for your donation!");
       setIsOpen(false);

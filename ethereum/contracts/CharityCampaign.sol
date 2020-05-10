@@ -61,13 +61,14 @@ contract CharityCampaign {
         isFunded = true;
     }
 
-    function donateToCampaign(uint256 value) public payable {
+    function donateToCampaign(address sender) public payable {
         require(
-            value > minDonation,
+            msg.value > minDonation,
             "you need to meet the minimum donation requirement"
         );
-        donors[msg.sender] = true;
-        donorsAmounts[msg.sender].push(value);
+        require(!isFunded, "campaign ended");
+        donors[sender] = true;
+        donorsAmounts[sender].push(msg.value);
         donorsCount++;
     }
 
@@ -76,10 +77,6 @@ contract CharityCampaign {
         uint256 amount,
         address payable recipient
     ) public restrictedAccess {
-        require(
-            isFunded,
-            "campaign should be funded before creating spending requests"
-        );
         SpendingRequest memory spendingReq = SpendingRequest({
             description: spendingDescription,
             amount: amount,
@@ -166,7 +163,7 @@ contract CharityCampaign {
         return request.allApprovals[approver];
     }
 
-    function didDonate(address donorAddress) public view returns (bool) {
+    function didDonate(address donorAddress) external view returns (bool) {
         return donors[donorAddress];
     }
 
