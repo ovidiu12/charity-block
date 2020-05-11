@@ -3,7 +3,7 @@ import Main from "./build/CharityMain.json";
 
 const MainContract = new web3.eth.Contract(
   Main.abi,
-  "0x5629CFE15DE8C1D2678642898AC2B529f1E9C02B" //deployed contract address
+  "0x31684f35d7E6aD3DC1202aE0520250FeeD3ef368" //deployed contract address
 );
 
 export default MainContract;

@@ -7,44 +7,14 @@ import { CampaignModalContext } from "../../components/home/campaign-context";
 import MainContract from "../../ethereum";
 import Campaign from "../../ethereum/campaign";
 import DonateModal from "../../components/home/donate-modal";
+import useMetamask from "../../components/hooks/metamask";
 
 const Home = ({ campaigns }) => {
-  const [metamaskEnabled, setMetamaskEnabled] = React.useState(false);
   const [campaignModalIsOpen, setCampaignModalIsOpen] = React.useState(false);
   const [donateModalIsOpen, setDonateModalIsOpen] = React.useState(false);
   const [donateModalCampaign, setDonateModalCampaign] = React.useState(null);
+  const { metamaskEnabled, loading, enableEth } = useMetamask();
 
-  const [loading, setLoading] = React.useState(true);
-  const enableEth = async () => {
-    const { ethereum } = window;
-    if (ethereum) {
-      try {
-        const web3 = new Web3(ethereum);
-        const selectedAccount = await ethereum.enable();
-        if (!selectedAccount) {
-          // User didn't give permission for dapp to access wallet
-          setMetamaskEnabled(false);
-          setLoading(false);
-        } else {
-          // User allowed access
-          setMetamaskEnabled(true);
-          setLoading(false);
-        }
-        return web3;
-      } catch (error) {
-        setLoading(false);
-        // whoopsie!
-        console.log(error);
-      }
-    } else {
-      setMetamaskEnabled(false);
-      setLoading(false);
-    }
-  };
-
-  React.useEffect(() => {
-    enableEth();
-  }, []);
   if (loading) {
     return (
       <Layout>
@@ -92,7 +62,7 @@ const Home = ({ campaigns }) => {
             )}
           </>
         ) : (
-          <MetamaskInfo />
+          <MetamaskInfo enableEth={enableEth} />
         )}
         <NewCampaignModal />
         {donateModalCampaign && donateModalIsOpen && (

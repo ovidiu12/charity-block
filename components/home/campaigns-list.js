@@ -85,7 +85,10 @@ const CampaignsList = ({ campaigns, handleOpenDonateModal }) => {
   return (
     <Grid container spacing={4}>
       {campaigns.map((campaign) => {
-        console.log(campaign);
+        const progress = (
+          (web3.utils.fromWei(campaign.balance, "ether") * 100) /
+          web3.utils.fromWei(campaign.goal, "ether")
+        ).toFixed(1);
         const description = campaign.description;
         const minDonation = web3.utils.fromWei(campaign.minDonation, "ether");
         return (
@@ -105,10 +108,7 @@ const CampaignsList = ({ campaigns, handleOpenDonateModal }) => {
               <Progress>
                 <LinearProgress
                   variant="determinate"
-                  value={
-                    (web3.utils.fromWei(campaign.balance, "ether") * 100) /
-                    web3.utils.fromWei(campaign.goal, "ether")
-                  }
+                  value={progress >= 100 ? 100 : progress}
                   color="primary"
                 />
                 <span>

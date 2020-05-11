@@ -13,7 +13,7 @@ import styled from "styled-components";
 import { CampaignModalContext } from "./home/campaign-context";
 import Link from "next/link";
 import AvatarImg from "../public/avatar.jpg";
-import web3 from "../ethereum/web3";
+import useMetamask from "./hooks/metamask";
 
 const Navbar = styled(AppBar)`
   && {
@@ -36,14 +36,7 @@ const NewCampaign = styled(Button)`
 
 const Layout = ({ children }) => {
   const { setIsOpen } = React.useContext(CampaignModalContext);
-  const [hasMetamask, setHasMetamask] = React.useState(false);
-
-  React.useEffect(() => {
-    web3.eth
-      .getAccounts()
-      .then((acc) => setHasMetamask(true))
-      .catch(() => setHasMetamask(false));
-  }, []);
+  const { metamaskEnabled } = useMetamask();
   return (
     <>
       <Navbar color="primary" position="relative">
@@ -60,7 +53,7 @@ const Layout = ({ children }) => {
                 Charity Block
               </Typography>
             </Link>
-            {hasMetamask && (
+            {metamaskEnabled && (
               <Actions>
                 <NewCampaign onClick={() => setIsOpen(true)} variant="outlined">
                   New Campaign

@@ -10,7 +10,7 @@ contract CharityCampaign {
         bool isComplete;
         uint256 nrOfApprovals;
         //who approved the request
-        mapping(address => bool) allApprovals;
+        mapping(address => uint256) allApprovals;
     }
 
     SpendingRequest[] public spendingRequests;
@@ -54,7 +54,7 @@ contract CharityCampaign {
 
     function finishCampaign() public restrictedAccess {
         require(
-            address(this).balance > goal,
+            address(this).balance >= goal,
             "balance needs to be bigger than the goal"
         );
 
@@ -97,11 +97,12 @@ contract CharityCampaign {
             "you must donate to this campaign before approving a request"
         );
         require(
-            !request.allApprovals[msg.sender],
+            request.allApprovals[msg.sender] <=
+                donorsAmounts[msg.sender].length,
             "address already approved request"
         );
         //add address into the approvals array
-        request.allApprovals[msg.sender] = true;
+        request.allApprovals[msg.sender]++;
         //increase nr of approvals
         request.nrOfApprovals++;
     }
@@ -160,7 +161,8 @@ contract CharityCampaign {
     {
         SpendingRequest storage request = spendingRequests[index];
 
-        return request.allApprovals[approver];
+        return
+            request.allApprovals[approver] == donorsAmounts[msg.sender].length;
     }
 
     function didDonate(address donorAddress) external view returns (bool) {

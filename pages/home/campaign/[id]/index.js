@@ -214,6 +214,10 @@ const CampaignPage = (props) => {
       return;
     }
   };
+  const progress = (
+    (web3.utils.fromWei(props.balance, "ether") * 100) /
+    web3.utils.fromWei(props.goal, "ether")
+  ).toFixed(1);
   return (
     <Layout>
       <Link href={`/home`} passHref>
@@ -241,21 +245,16 @@ const CampaignPage = (props) => {
       </CoverImage>
       <Paper
         elevation={4}
-        style={{ padding: "70px 30px 30px 30px", position: "relative" }}
+        style={{
+          padding: "70px 30px 30px 30px",
+          marginBottom: "80px",
+          position: "relative",
+        }}
       >
-        <Progress
-          progress={(
-            (web3.utils.fromWei(props.balance, "ether") * 100) /
-            web3.utils.fromWei(props.goal, "ether")
-          ).toFixed(1)}
-          theme={muiTheme}
-        >
+        <Progress progress={progress} theme={muiTheme}>
           <LinearProgress
             variant="determinate"
-            value={
-              (web3.utils.fromWei(props.balance, "ether") * 100) /
-              web3.utils.fromWei(props.goal, "ether")
-            }
+            value={progress >= 100 ? 100 : progress}
             color="primary"
           />
           <span>
@@ -266,21 +265,25 @@ const CampaignPage = (props) => {
         {userAccounts &&
           userAccounts.includes(props.admin) &&
           props.balance >= props.goal && (
-            <div>
+            <div style={{ marginBottom: "50px" }}>
               <Alert severity="success">
                 Wohooo! This campaign has been funded.
-                <Button
-                  onClick={endCampaign}
-                  disabled={loading}
-                  variant="outlined"
-                  style={{ marginRight: "5px" }}
-                  startIcon={<FlagIcon />}
-                >
-                  {loading ? "Loading..." : "End Campaign"}
-                </Button>
+                {!props.isFunded && (
+                  <Button
+                    onClick={endCampaign}
+                    disabled={loading}
+                    variant="outlined"
+                    style={{ marginRight: "5px" }}
+                    startIcon={<FlagIcon />}
+                  >
+                    {loading ? "Loading..." : "End Campaign"}
+                  </Button>
+                )}
               </Alert>
               <Typography style={{ marginBottom: "10px" }} variant="body1">
-                You can end the campaign or keep it going.
+                {!props.isFunded
+                  ? "You can end the campaign or keep it going. Don't forget! In order to create spending requests you need to end the campaign first."
+                  : "You can start creating spending requests."}
               </Typography>
             </div>
           )}
@@ -323,7 +326,8 @@ const CampaignPage = (props) => {
           <Actions>
             {userAccounts &&
               userAccounts.includes(props.admin) &&
-              props.balance > 0 && (
+              props.balance > 0 &&
+              props.isFunded && (
                 <Button
                   onClick={() => setSpendingModalIsOpen(true)}
                   variant="outlined"

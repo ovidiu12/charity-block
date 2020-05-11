@@ -65,7 +65,7 @@ const SpendingModal = ({ isOpen, setIsOpen, campaign }) => {
         )
         .send({
           from: accounts[0],
-          gas: "2000000",
+          gas: "5000000",
         });
       toast.success("Spending request created!");
       setIsOpen(false);

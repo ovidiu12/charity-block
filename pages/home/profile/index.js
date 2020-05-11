@@ -13,6 +13,9 @@ import {
 import MainContract from "../../../ethereum";
 import web3 from "../../../ethereum/web3";
 import styled from "styled-components";
+import FoodPanda from "../../../public/foodpanda.jpg";
+import Bolt from "../../../public/bolt.png";
+
 const StyledCard = styled(Card)`
   height: 100%;
   display: flex;
@@ -112,7 +115,7 @@ const Profile = () => {
         You can use the Charity Tokens to get special deals from our partners
         listed bellow.
       </Typography>
-      <Grid container spacing={4}>
+      <Grid style={{ marginBottom: "80px" }} container spacing={4}>
         <Grid item xs={12} sm={6} md={4}>
           <StyledCard>
             <StyledCardMedia
@@ -125,6 +128,43 @@ const Profile = () => {
               </Typography>
               <Typography>
                 Get a discount on Udemy using Charity Tokens
+              </Typography>
+            </StyledCardContent>
+            <StyledCardActions>
+              <Button size="small" variant="contained" color="primary">
+                Get Deal
+              </Button>
+            </StyledCardActions>
+          </StyledCard>
+        </Grid>
+        <Grid item xs={12} sm={6} md={4}>
+          <StyledCard>
+            <StyledCardMedia image={FoodPanda} title="Food Panda" />
+            <StyledCardContent>
+              <Typography gutterBottom variant="h5" component="h2">
+                Foodpanda Discount
+              </Typography>
+              <Typography>
+                Spend Charity Tokens and get a discount on your meal ordered
+                through Food Panda.
+              </Typography>
+            </StyledCardContent>
+            <StyledCardActions>
+              <Button size="small" variant="contained" color="primary">
+                Get Deal
+              </Button>
+            </StyledCardActions>
+          </StyledCard>
+        </Grid>
+        <Grid item xs={12} sm={6} md={4}>
+          <StyledCard>
+            <StyledCardMedia image={Bolt} title="Bolt" />
+            <StyledCardContent>
+              <Typography gutterBottom variant="h5" component="h2">
+                Bolt Discount
+              </Typography>
+              <Typography>
+                Donate and spend your Charity Tokens with Bolt.
               </Typography>
             </StyledCardContent>
             <StyledCardActions>
