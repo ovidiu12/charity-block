@@ -10,7 +10,7 @@ contract CharityCampaign {
         bool isComplete;
         uint256 nrOfApprovals;
         //who approved the request
-        mapping(address => uint256) allApprovals;
+        mapping(address => bool) allApprovals;
     }
 
     SpendingRequest[] public spendingRequests;
@@ -68,8 +68,10 @@ contract CharityCampaign {
         );
         require(!isFunded, "campaign ended");
         donors[sender] = true;
+        if (donorsAmounts[sender].length == 0) {
+            donorsCount++;
+        }
         donorsAmounts[sender].push(msg.value);
-        donorsCount++;
     }
 
     function createSpendingRequest(
@@ -97,12 +99,11 @@ contract CharityCampaign {
             "you must donate to this campaign before approving a request"
         );
         require(
-            request.allApprovals[msg.sender] <=
-                donorsAmounts[msg.sender].length,
+            !request.allApprovals[msg.sender],
             "address already approved request"
         );
         //add address into the approvals array
-        request.allApprovals[msg.sender]++;
+        request.allApprovals[msg.sender] = true;
         //increase nr of approvals
         request.nrOfApprovals++;
     }
@@ -161,8 +162,7 @@ contract CharityCampaign {
     {
         SpendingRequest storage request = spendingRequests[index];
 
-        return
-            request.allApprovals[approver] == donorsAmounts[msg.sender].length;
+        return request.allApprovals[approver];
     }
 
     function didDonate(address donorAddress) external view returns (bool) {

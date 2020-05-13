@@ -105,17 +105,32 @@ const CampaignsList = ({ campaigns, handleOpenDonateModal }) => {
                 image={`https://ipfs.io/ipfs/${campaign.imageHash}`}
                 title="Image title"
               />
-              <Progress>
-                <LinearProgress
-                  variant="determinate"
-                  value={progress >= 100 ? 100 : progress}
-                  color="primary"
-                />
-                <span>
-                  {web3.utils.fromWei(campaign.balance, "ether")} Ether out of{" "}
-                  {web3.utils.fromWei(campaign.goal, "ether")} funded
-                </span>
-              </Progress>
+              {campaign.isFunded ? (
+                <Progress>
+                  <LinearProgress
+                    variant="determinate"
+                    value={100}
+                    color="primary"
+                  />
+                  <span>
+                    This campaign has been funded! It raised{" "}
+                    <b>{web3.utils.fromWei(campaign.goal, "ether")} ETH</b>
+                  </span>
+                </Progress>
+              ) : (
+                <Progress>
+                  <LinearProgress
+                    variant="determinate"
+                    value={progress >= 100 ? 100 : progress}
+                    color="primary"
+                  />
+                  <span>
+                    {web3.utils.fromWei(campaign.balance, "ether")} Ether out of{" "}
+                    {web3.utils.fromWei(campaign.goal, "ether")} funded
+                  </span>
+                </Progress>
+              )}
+
               <StyledCardContent>
                 <Typography gutterBottom variant="h5" component="h2">
                   {campaign.title}
@@ -127,14 +142,17 @@ const CampaignsList = ({ campaigns, handleOpenDonateModal }) => {
                 </Typography>
               </StyledCardContent>
               <StyledCardActions>
-                <Button
-                  onClick={() => handleOpenDonateModal(campaign)}
-                  size="small"
-                  variant="contained"
-                  color="primary"
-                >
-                  Donate
-                </Button>
+                {!campaign.isFunded && (
+                  <Button
+                    onClick={() => handleOpenDonateModal(campaign)}
+                    size="small"
+                    variant="contained"
+                    color="primary"
+                  >
+                    Donate
+                  </Button>
+                )}
+
                 <Link href={`/home/campaign/${campaign.address}`} passHref>
                   <a>
                     <Button size="small" color="primary">

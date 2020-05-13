@@ -58,21 +58,11 @@ const SpendingRequests = (props) => {
       }
     };
 
-    const getDonatedAmount = async (acc) => {
-      const campaign = Campaign(props.address);
-      const donatedAmounts = await campaign.methods
-        .getAmountDonated(acc)
-        .call();
-      setState({ ...state, donatedAmounts: donatedAmounts });
-    };
-
     if (userAccounts) {
       donated(userAccounts[0]);
-      getDonatedAmount(userAccounts[0]);
     }
   }, [userAccounts]);
   const muiTheme = useTheme();
-  console.log(state);
   const finalizeRequest = async (data) => {
     const approvalsNeeded =
       props.donorsCount / 2 > 1 ? Math.round(props.donorsCount / 2) : 1;
@@ -164,44 +154,10 @@ const SpendingRequests = (props) => {
           </Button>
         </a>
       </Link>
-      {state.donatedAmounts && (
-        <>
-          <Typography
-            style={{ marginTop: "50px" }}
-            variant="h5"
-            align="left"
-            color="textSecondary"
-            paragraph
-          >
-            Your donations for this campaign:
-          </Typography>
-          <div style={{ marginBottom: "20px" }}>
-            {state.donatedAmounts.map((amount) => (
-              <span
-                style={{
-                  marginLeft: "10px",
-                  background: muiTheme.palette.primary.main,
-                  color: "white",
-                  padding: "5px 10px",
-                  borderRadius: "50px",
-                }}
-                variant="body1"
-              >
-                {web3.utils.fromWei(amount, "ether")} ETH{" "}
-              </span>
-            ))}
-          </div>
-          <Typography style={{ marginBottom: "50px" }} variant="body1">
-            You earned {state.donatedAmounts.length} approvals for each spending
-            request.
-          </Typography>
-        </>
-      )}
 
       <Typography variant="h5" align="center" color="textSecondary" paragraph>
         Spending Requests
       </Typography>
-      <p>{}</p>
       <TableContainer component={Paper}>
         <Table aria-label="simple table">
           <TableHead>

@@ -37,7 +37,6 @@ const DonateModal = ({ isOpen, setIsOpen, campaign }) => {
   const [loading, setLoading] = React.useState(false);
   const [address, setAddress] = React.useState(null);
   const [success, setSuccess] = React.useState(false);
-  console.log(campaign);
   const [state, setState] = React.useState({
     amount: 0,
   });

@@ -184,16 +184,29 @@ function Alert(props) {
 
 const CampaignPage = (props) => {
   const [userAccounts, setUserAccounts] = React.useState(null);
+  const [donatedAmounts, setDonatedAmounts] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
   const muiTheme = useTheme();
   const minDonation = web3.utils.fromWei(props.minDonation, "ether");
   const [spendingModalIsOpen, setSpendingModalIsOpen] = React.useState(false);
   const [donateModalIsOpen, setDonateModalIsOpen] = React.useState(false);
 
+  const getDonatedAmount = async (acc) => {
+    const campaign = Campaign(props.address);
+    const donatedAmounts = await campaign.methods.getAmountDonated(acc).call();
+    setDonatedAmounts(donatedAmounts);
+  };
+
   React.useEffect(() => {
     //get current user addresses
     web3.eth.getAccounts().then((acc) => setUserAccounts(acc));
   }, []);
+
+  React.useEffect(() => {
+    if (userAccounts) {
+      getDonatedAmount(userAccounts[0]);
+    }
+  }, [userAccounts]);
 
   const endCampaign = async () => {
     setLoading(true);
@@ -218,6 +231,7 @@ const CampaignPage = (props) => {
     (web3.utils.fromWei(props.balance, "ether") * 100) /
     web3.utils.fromWei(props.goal, "ether")
   ).toFixed(1);
+  console.log(props);
   return (
     <Layout>
       <Link href={`/home`} passHref>
@@ -227,6 +241,35 @@ const CampaignPage = (props) => {
           </Button>
         </a>
       </Link>
+      {donatedAmounts && donatedAmounts.length > 0 && (
+        <>
+          <Typography
+            style={{ marginTop: "50px" }}
+            variant="h5"
+            align="left"
+            color="textSecondary"
+            paragraph
+          >
+            Your donations for this campaign:
+          </Typography>
+          <div style={{ marginBottom: "20px" }}>
+            {donatedAmounts.map((amount) => (
+              <span
+                style={{
+                  marginLeft: "10px",
+                  background: muiTheme.palette.primary.main,
+                  color: "white",
+                  padding: "5px 10px",
+                  borderRadius: "50px",
+                }}
+                variant="body1"
+              >
+                {web3.utils.fromWei(amount, "ether")} ETH{" "}
+              </span>
+            ))}
+          </div>
+        </>
+      )}
       <CoverImage>
         <MinDonation aria-label="delete">
           <div>
@@ -239,7 +282,7 @@ const CampaignPage = (props) => {
           <div>
             <span>{props.donorsCount}</span>
           </div>
-          <p>{props.donorsCount > 1 ? "DONATIONS" : "DONATION"}</p>
+          <p>DONORS</p>
         </Supporters>
         <Image src={`https://ipfs.io/ipfs/${props.imageHash}`} />
       </CoverImage>
@@ -257,11 +300,28 @@ const CampaignPage = (props) => {
             value={progress >= 100 ? 100 : progress}
             color="primary"
           />
-          <span>
-            {web3.utils.fromWei(props.balance, "ether")} ETH out of{" "}
-            {web3.utils.fromWei(props.goal, "ether")} ETH funded
-          </span>
+          {props.isFunded ? (
+            <span>
+              <b>Balance left:</b> {web3.utils.fromWei(props.balance, "ether")}{" "}
+              ETH out of {web3.utils.fromWei(props.goal, "ether")} ETH funded
+            </span>
+          ) : (
+            <span>
+              {web3.utils.fromWei(props.balance, "ether")} ETH out of{" "}
+              {web3.utils.fromWei(props.goal, "ether")} ETH funded
+            </span>
+          )}
         </Progress>
+        {props.isFunded && (
+          <div style={{ marginBottom: "50px" }}>
+            <Alert severity="success">This campaign ended.</Alert>
+            <Typography style={{ marginBottom: "10px" }} variant="body1">
+              If you donated to this campaign make sure you check the spending
+              requests and cast your vote, so the beneficiary can use their
+              funds.
+            </Typography>
+          </div>
+        )}
         {userAccounts &&
           userAccounts.includes(props.admin) &&
           props.balance >= props.goal && (
