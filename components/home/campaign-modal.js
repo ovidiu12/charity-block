@@ -99,7 +99,6 @@ const CampaignModal = () => {
               from: accounts[0],
               gas: "2000000",
             });
-          console.log(res);
           setIsOpen(false);
           setLoading(false);
           setSuccess(true);
